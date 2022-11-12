@@ -1,0 +1,37 @@
+<ReceiveMessageResponse>
+    <ReceiveMessageResult>
+        <Message>
+            <MD5OfBody>03ed928b62aee0c18f15dc123c695de9</MD5OfBody>
+            <Body>{&quot;test&quot;: 1, &quot;external_id&quot;: 5555}</Body>
+            <ReceiptHandle>1668283200-b0eef428-d880-46fd-9c88-58882a421937</ReceiptHandle>
+            <MessageId>b0eef428-d880-46fd-9c88-58882a421937</MessageId>
+        </Message>
+        <Message>
+            <MD5OfBody>a88e5d79dc2948e662b90dc2857ba05c</MD5OfBody>
+            <Body>{&quot;test&quot;: 2, &quot;external_id&quot;: 4444}</Body>
+            <ReceiptHandle>1668283200-0f8509ff-53fd-40ca-88c9-a3c8de61421c</ReceiptHandle>
+            <MessageId>0f8509ff-53fd-40ca-88c9-a3c8de61421c</MessageId>
+        </Message>
+        <Message>
+            <MD5OfBody>4078ede2743c523f62a4925e5ff90518</MD5OfBody>
+            <Body>{&quot;test&quot;: 3, &quot;external_id&quot;: 3333}</Body>
+            <ReceiptHandle>1668283200-230c49a3-da11-40c1-a001-83fdf7767d82</ReceiptHandle
+            ><MessageId>230c49a3-da11-40c1-a001-83fdf7767d82</MessageId>
+        </Message>
+        <Message>
+            <MD5OfBody>a88e5d79dc2948e662b90dc2857ba05c</MD5OfBody>
+            <Body>{&quot;test&quot;: 4, &quot;external_id&quot;: 2222}</Body>
+            <ReceiptHandle>1668283200-4ae4625c-0b91-4de4-833e-3847106606ef</ReceiptHandle>
+            <MessageId>4ae4625c-0b91-4de4-833e-3847106606ef</MessageId>
+        </Message>
+        <Message>
+            <MD5OfBody>03ed928b62aee0c18f15dc123c695de9</MD5OfBody>
+            <Body>{&quot;test&quot;: 5, &quot;external_id&quot;: 1111}</Body>
+            <ReceiptHandle>1668283200-70616444-2a79-4f7b-8656-bbd48a546d60</ReceiptHandle>
+            <MessageId>70616444-2a79-4f7b-8656-bbd48a546d60</MessageId>
+        </Message>
+    </ReceiveMessageResult>
+    <ResponseMetadata>
+        <RequestId/>
+    </ResponseMetadata>
+</ReceiveMessageResponse>

@@ -1,0 +1,9 @@
+<SendMessageResponse>
+    <SendMessageResult>
+        <MessageId>acdf9b7f-a639-4a5b-9557-b4de52a56d01</MessageId>
+        <MD5OfMessageBody>a88e5d79dc2948e662b90dc2857ba05c</MD5OfMessageBody>
+    </SendMessageResult>
+    <ResponseMetadata>
+        <RequestId/>
+    </ResponseMetadata>
+</SendMessageResponse>

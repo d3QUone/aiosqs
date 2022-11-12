@@ -1,0 +1,6 @@
+<ReceiveMessageResponse>
+    <ReceiveMessageResult/>
+    <ResponseMetadata>
+        <RequestId/>
+    </ResponseMetadata>
+</ReceiveMessageResponse>
