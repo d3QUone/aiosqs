@@ -18,8 +18,6 @@ Related issues:
 - https://github.com/aio-libs/aiobotocore/issues/970
 
 
-----
-
 ## Installation
 
 Install package:
@@ -27,7 +25,6 @@ Install package:
 pip install aiosqs
 ```
 
-----
 
 ## Usage
 
@@ -36,10 +33,10 @@ Create a client:
 from aiosqs import SQSClient
 
 client = SQSClient(
-    aws_access_key_id=aws_access_key_id,
-    aws_secret_access_key=aws_secret_access_key,
+    aws_access_key_id="access_key_id",
+    aws_secret_access_key="secret_access_key",
     region_name="us-west-2",
-    host=""sqs.us-west-2.amazonaws.com",
+    host="sqs.us-west-2.amazonaws.com",
 )
 ```
 
@@ -83,5 +80,3 @@ Close the client at the end:
 ```python
 await self.client.close()
 ```
-
-----
