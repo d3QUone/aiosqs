@@ -1,0 +1,85 @@
+[project]
+name = "aiosqs"
+description = "Python asynchronous and lightweight SQS client."
+license = "MIT"
+authors = [
+    {name = "Vladimir Kasatkin", email = "vladimirkasatkinbackend@gmail.com"},
+]
+keywords = ["aws", "sqs"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Unix",
+    "Operating System :: POSIX :: Linux",
+    "Environment :: Console",
+    "Environment :: MacOS X",
+    "Framework :: AsyncIO",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "aiohttp[speedups]>=3",
+    "lxml>=4",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+Homepage = "https://github.com/d3QUone/aiosqs"
+Tracker = "https://github.com/d3QUone/aiosqs/issues"
+Source = "https://github.com/d3QUone/aiosqs"
+
+[tool.poetry]
+name = "aiosqs"
+version = "0.1.0"
+description = "Python asynchronous and lightweight SQS client."
+authors = ["Vladimir Kasatkin <vladimirkasatkinbackend@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiohttp = {extras = ["speedups"], version = "^3"}
+lxml = "^4"
+
+[tool.poetry.group.dev.dependencies]
+nose2 = "0.12.0"
+freezegun = "1.2.2"
+
+[tool.black]
+line-length = 140
+
+[tool.hatch]
+
+[build-system]
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "aiosqs/__init__.py"
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+fragments = [
+    {path = "README.md"},
+]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/.github",
+    "/MAINTAIN.md",
+    "/Makefile",
+    "/aiosqs/tests",
+]

@@ -1,0 +1,13 @@
+<ReceiveMessageResponse>
+    <ReceiveMessageResult>
+        <Message>
+            <MD5OfBody>96db854b55b71e6b6298e93df0b6a176</MD5OfBody>
+            <Body>{&quot;test&quot;: 1}</Body>
+            <ReceiptHandle>1668283200-5c88d474-84c6-48c9-a713-0fb01b556d37</ReceiptHandle>
+            <MessageId>5c88d474-84c6-48c9-a713-0fb01b556d37</MessageId>
+        </Message>
+    </ReceiveMessageResult>
+    <ResponseMetadata>
+        <RequestId/>
+    </ResponseMetadata>
+</ReceiveMessageResponse>

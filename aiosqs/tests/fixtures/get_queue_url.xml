@@ -1,0 +1,10 @@
+<GetQueueUrlResponse>
+    <GetQueueUrlResult>
+        <QueueUrl>
+            http://sqs.mcs.mail.ru/account123/example_queue
+        </QueueUrl>
+    </GetQueueUrlResult>
+    <ResponseMetadata>
+        <RequestId/>
+    </ResponseMetadata>
+</GetQueueUrlResponse>
