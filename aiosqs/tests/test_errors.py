@@ -20,3 +20,18 @@ class ErrorsTestCase(unittest.TestCase):
             exception.error.message,
             "Value (quename_nonalpha) for parameter QueueName is invalid.\n         Must be an alphanumeric String of 1 to 80 in length.",
         )
+
+    def test_unknown_error(self):
+        with self.assertRaises(SQSErrorResponse) as e:
+            parse_xml_result_response(
+                action="ReceiveMessage",
+                body=load_fixture("error_500.xml"),
+            )
+        exception = e.exception
+        self.assertEqual(exception.request_id, "9ae1448a-3d1c-4b7f-b699-f6407e9dc5f2")
+        self.assertEqual(exception.error.type, "Sender")
+        self.assertEqual(exception.error.code, "InternalFailure")
+        self.assertEqual(
+            exception.error.message,
+            "The request processing has failed because of an unknown error, exception or failure.",
+        )
