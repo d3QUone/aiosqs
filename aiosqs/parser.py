@@ -1,8 +1,18 @@
+from logging import getLogger
 from typing import Optional
 
 from lxml import etree
 
 from aiosqs.exceptions import ErrorData, SQSErrorResponse
+from aiosqs.types import LoggerType
+
+default_logger = getLogger(__name__)
+
+
+def el_text(el) -> Optional[str]:
+    if text := el.text:
+        return text.strip()
+    return None
 
 
 def collect_elements(root, xpath: str):
@@ -10,8 +20,7 @@ def collect_elements(root, xpath: str):
     for child in root.xpath(xpath):
         item = {}
         for elem in child:
-            value = elem.text.strip()
-            item[elem.tag] = value
+            item[elem.tag] = el_text(elem)
         if item:
             multi_response.append(item)
     return multi_response
@@ -19,13 +28,23 @@ def collect_elements(root, xpath: str):
 
 def find_request_id(root) -> Optional[str]:
     for child in root.xpath("./RequestId"):
-        if value := child.text.strip():
-            return value
+        if text := el_text(child):
+            return text
     return None
 
 
-def parse_xml_result_response(action: str, body: str):
-    root = etree.fromstring(body)
+def parse_xml_result_response(action: str, body: str, logger: Optional[LoggerType] = None):
+    logger = logger or default_logger
+    logger.debug("Message for %s: %s", action, body)
+
+    parser = etree.XMLParser(
+        remove_blank_text=True,
+        remove_comments=True,
+        remove_pis=True,
+        recover=False,
+    )
+    root = etree.fromstring(text=body, parser=parser)
+
     request_id = find_request_id(root=root)
 
     # Check for errors first
@@ -48,7 +67,7 @@ def parse_xml_result_response(action: str, body: str):
     # Response is a list of objects of the same type
     if len(elements) == 1 and len(elements[0]) == 1:
         key, value = list(elements[0].items())[0]
-        if value == "":
+        if not value:
             xpath = f"{xpath}/{key}"
             return collect_elements(root=root, xpath=xpath)
 

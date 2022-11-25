@@ -32,6 +32,23 @@ class ReceiveMessageTestCase(unittest.TestCase):
             ],
         )
 
+    def test_parse_oneline_xml(self):
+        res = parse_xml_result_response(
+            action=self.action,
+            body=load_fixture("receive_message_ugly.xml"),
+        )
+        self.assertEqual(
+            res,
+            [
+                {
+                    "MD5OfBody": "cc12d89c4c6a34a4d8b78f970cd75534",
+                    "Body": '{"external_id": 29, "market": "usdtrub", "side": "sell", "amount": "16.05"}',
+                    "ReceiptHandle": "1669388400-f96963bf-3f5f-40e8-8df2-9ce9ff90adf8",
+                    "MessageId": "f96963bf-3f5f-40e8-8df2-9ce9ff90adf8",
+                },
+            ],
+        )
+
     def test_many_messages(self):
         res = parse_xml_result_response(
             action=self.action,
