@@ -2,4 +2,4 @@
 VERBOSE=1
 
 test:
-	poetry run nose2 --verbosity $(VERBOSE)
+	poetry run nose2 --verbosity $(VERBOSE) $(target)

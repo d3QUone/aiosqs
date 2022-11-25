@@ -138,7 +138,7 @@ class SQSClient:
             self.logger.error(f"SQS API error: status_code={response.status}, body={response_body}")
             raise SQSClientBaseError
 
-        return parse_xml_result_response(action=params["Action"], body=response_body)
+        return parse_xml_result_response(action=params["Action"], body=response_body, logger=self.logger)
 
     async def get_queue_url(self, queue_name: str) -> GetQueueUrlResponse:
         params = {
