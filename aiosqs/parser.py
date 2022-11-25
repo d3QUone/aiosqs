@@ -1,3 +1,4 @@
+import re
 from logging import getLogger
 from typing import Optional
 
@@ -15,19 +16,27 @@ def el_text(el) -> Optional[str]:
     return None
 
 
+def el_tag(el) -> str:
+    """Returns element tag name without namespace
+    {http://queue.amazonaws.com/doc/2012-11-05/}Error -> Error
+    """
+    tag = el.tag
+    return re.sub(r"\{.*?}", "", tag, flags=re.IGNORECASE)
+
+
 def collect_elements(root, xpath: str):
     multi_response = []
     for child in root.xpath(xpath):
         item = {}
         for elem in child:
-            item[elem.tag] = el_text(elem)
+            item[el_tag(elem)] = el_text(elem)
         if item:
             multi_response.append(item)
     return multi_response
 
 
 def find_request_id(root) -> Optional[str]:
-    for child in root.xpath("./RequestId"):
+    for child in root.xpath("./*[local-name() = 'RequestId']"):
         if text := el_text(child):
             return text
     return None
@@ -48,7 +57,7 @@ def parse_xml_result_response(action: str, body: str, logger: Optional[LoggerTyp
     request_id = find_request_id(root=root)
 
     # Check for errors first
-    xpath = "./Error"
+    xpath = "./*[local-name() = 'Error']"
     if elements := collect_elements(root=root, xpath=xpath):
         error = elements[0]
         raise SQSErrorResponse(
