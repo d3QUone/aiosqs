@@ -42,7 +42,7 @@ client = SQSClient(
 
 Receive the queue url by queue name:
 ```python
-response = await self.client.get_queue_url(queue_name=queue_name)
+response = await client.get_queue_url(queue_name=queue_name)
 queue_url = response["QueueUrl"]
 ```
 
@@ -78,5 +78,5 @@ await client.delete_message(
 
 Close the client at the end:
 ```python
-await self.client.close()
+await client.close()
 ```
