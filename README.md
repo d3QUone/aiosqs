@@ -5,6 +5,8 @@
 Python asynchronous and lightweight SQS client. The goal of this library is to provide fast and optimal access to SQS 
 for Python projects, e.g. when you need a high-load queue consumer or high-load queue producer written in Python.
 
+Supports Python versions 3.8, 3.9, 3.10, 3.11.
+
 ----
 
 ## Why aiosqs?
@@ -79,4 +81,14 @@ await client.delete_message(
 Close the client at the end:
 ```python
 await client.close()
+```
+
+
+## Development
+
+Set up env and install dependencies:
+```shell
+python3 -m pip install poetry==1.5.0
+poetry env use 3.11
+poetry install
 ```
