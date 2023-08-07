@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    registries: "*"
+    schedule:
+      interval: "weekly"
+    # Disable just version updates, keep only security updates.
+    open-pull-requests-limit: 0
