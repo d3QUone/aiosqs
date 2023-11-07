@@ -5,7 +5,7 @@
 Python asynchronous and lightweight SQS client. The goal of this library is to provide fast and optimal access to SQS 
 for Python projects, e.g. when you need a high-load queue consumer or high-load queue producer written in Python.
 
-Supports Python versions 3.8, 3.9, 3.10, 3.11.
+Supports Python versions 3.8, 3.9, 3.10, 3.11, 3.12.
 
 ----
 
