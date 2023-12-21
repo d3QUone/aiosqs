@@ -5,6 +5,7 @@ Set up environment:
 python3 -m pip install poetry==1.5.0
 poetry env use 3.11
 poetry install
+poetry run pre-commit install
 ```
 
 Run tests:
