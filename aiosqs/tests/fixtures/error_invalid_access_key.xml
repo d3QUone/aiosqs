@@ -1,0 +1,9 @@
+<ErrorResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/">
+    <Error>
+        <Type>Sender</Type>
+        <Code>InvalidClientTokenId</Code>
+        <Message>key_id is invalid</Message>
+        <Details/>
+    </Error>
+    <RequestId>4622a4ae-1166-48d6-bf50-2091ab4caafb</RequestId>
+</ErrorResponse>

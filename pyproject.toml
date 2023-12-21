@@ -44,7 +44,7 @@ Source = "https://github.com/d3QUone/aiosqs"
 
 [tool.poetry]
 name = "aiosqs"
-version = "0.1.0"
+version = "1.0.3"
 description = "Python asynchronous and lightweight SQS client."
 authors = ["Vladimir Kasatkin <vladimirkasatkinbackend@gmail.com>"]
 license = "MIT"
@@ -60,6 +60,8 @@ freezegun = "1.2.2"
 pre-commit = "2.17.0"
 packaging = "23.2"
 aioresponses = "0.7.6"
+python-dotenv = "1.0.0"
+ddt = "1.7.0"
 
 [tool.black]
 line-length = 140
@@ -85,4 +87,5 @@ exclude = [
     "/MAINTAIN.md",
     "/Makefile",
     "/aiosqs/tests",
+    "/e2e",
 ]

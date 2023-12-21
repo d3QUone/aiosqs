@@ -18,7 +18,10 @@ class ErrorsTestCase(unittest.TestCase):
         self.assertEqual(exception.error.code, "InvalidParameterValue")
         self.assertEqual(
             exception.error.message,
-            "Value (quename_nonalpha) for parameter QueueName is invalid.\n         Must be an alphanumeric String of 1 to 80 in length.",
+            (
+                "Value (quename_nonalpha) for parameter QueueName is invalid.\n         "
+                "Must be an alphanumeric String of 1 to 80 in length."
+            ),
         )
 
     def test_unknown_error(self):
@@ -35,3 +38,14 @@ class ErrorsTestCase(unittest.TestCase):
             exception.error.message,
             "The request processing has failed because of an unknown error, exception or failure.",
         )
+
+    def test_signature_does_not_match(self):
+        with self.assertRaises(SQSErrorResponse) as e:
+            parse_xml_result_response(
+                action="SendMessage",
+                body=load_fixture("error_signature.xml"),
+            )
+        exception = e.exception
+        self.assertEqual(exception.request_id, "f679cf26-effe-5e59-81ca-92cf5c4c713b")
+        self.assertEqual(exception.error.type, "Sender")
+        self.assertEqual(exception.error.code, "SignatureDoesNotMatch")
