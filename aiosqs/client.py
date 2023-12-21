@@ -12,7 +12,7 @@ import aiohttp
 
 from aiosqs.encryption import get_signature_key, hmac_sha256_hexdigest, sha256_hexdigest
 from aiosqs.exceptions import SQSClientBaseError
-from aiosqs.types import LoggerType, GetQueueUrlResponse, ReceiveMessageResponse
+from aiosqs.types import LoggerType, GetQueueUrlResponse, ReceiveMessageResponse, SendMessageResponse
 from aiosqs.parser import parse_xml_result_response
 
 default_logger = getLogger(__name__)
@@ -144,7 +144,12 @@ class SQSClient:
             raise SQSClientBaseError
 
         if not response.ok:
-            self.logger.error(f"SQS API error: status_code=%s, body=%s", response.status, response_body)
+            status_code = response.status
+            self.logger.error(f"SQS API error: status_code=%s, body=%s", status_code, response_body)
+
+            if "ErrorResponse" in response_body:
+                return parse_xml_result_response(action=params["Action"], body=response_body, logger=self.logger)
+
             raise SQSClientBaseError
 
         return parse_xml_result_response(action=params["Action"], body=response_body, logger=self.logger)
@@ -156,7 +161,7 @@ class SQSClient:
         }
         return await self.request(params=params)
 
-    async def send_message(self, queue_url: str, message_body: str, delay_seconds: int = 0):
+    async def send_message(self, queue_url: str, message_body: str, delay_seconds: int = 0) -> SendMessageResponse:
         params = {
             "Action": "SendMessage",
             "DelaySeconds": delay_seconds,

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<ErrorResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/">
+   <Error>
+      <Type>Sender</Type>
+      <Code>SignatureDoesNotMatch</Code>
+      <Message>The request signature we calculated does not match the signature you provided. Check your AWS Secret Access Key and signing method. Consult the service documentation for details.
+
+The Canonical String for this request should have been
+'GET
+/
+Action=SendMessage&amp;DelaySeconds=0&amp;MessageBody=message%20%20with%20a%20space&amp;QueueUrl=https%3A%2F%2Fsqs.us-east-1.amazonaws.com%2F763215857860%2Fcontent-repository-processing-queue-prod&amp;Version=2012-11-05
+host:sqs.us-east-1.amazonaws.com
+x-amz-date:20231205T232537Z
+
+host;x-amz-date
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+
+The String-to-Sign should have been
+'AWS4-HMAC-SHA256
+20231205T232537Z
+20231205/us-east-1/sqs/aws4_request
+4ea765b1b277df9a9b929ee3383f75060631e8f75fb38b9c8b8b05a84c009474'
+      </Message>
+      <Detail/>
+   </Error>
+   <RequestId>f679cf26-effe-5e59-81ca-92cf5c4c713b</RequestId>
+</ErrorResponse>
