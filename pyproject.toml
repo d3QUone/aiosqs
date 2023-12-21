@@ -58,6 +58,8 @@ lxml = "^4"
 nose2 = "0.12.0"
 freezegun = "1.2.2"
 pre-commit = "2.17.0"
+packaging = "23.2"
+aioresponses = "0.7.6"
 
 [tool.black]
 line-length = 140

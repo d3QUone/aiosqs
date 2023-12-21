@@ -30,6 +30,7 @@ class SQSClient:
         host: str,
         timeout_sec: Optional[int] = None,
         logger: Optional[LoggerType] = None,
+        verify_ssl: Optional[bool] = None,
     ):
         self.service_name = "sqs"
         self.region_name = region_name
@@ -39,6 +40,7 @@ class SQSClient:
         # It's your host including region (if related), e.g. "sqs.us-west-2.amazonaws.com"
         self.host = host
         self.endpoint_url = f"https://{host}"
+        self.verify_ssl = verify_ssl
 
         self.logger = logger or default_logger
         self.timeout = aiohttp.ClientTimeout(total=timeout_sec or self.default_timeout_sec)
@@ -48,6 +50,12 @@ class SQSClient:
         await self.session.close()
         # https://docs.aiohttp.org/en/stable/client_advanced.html#graceful-shutdown
         await asyncio.sleep(0.25)
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
 
     def get_headers(self, params: Dict):
         # Create a date for headers and the credential string
@@ -123,19 +131,20 @@ class SQSClient:
                 url=self.endpoint_url,
                 headers=headers,
                 params=params,
+                verify_ssl=self.verify_ssl,
             )
         except Exception as e:
-            self.logger.error(f"SQS request error: {e}")
+            self.logger.error("SQS request error: %s", e)
             raise SQSClientBaseError
 
         try:
             response_body = await response.text()
         except aiohttp.ContentTypeError as e:
-            self.logger.error(f"SQS API encoding error: {e}")
+            self.logger.error("SQS API encoding error: %s", e)
             raise SQSClientBaseError
 
         if not response.ok:
-            self.logger.error(f"SQS API error: status_code={response.status}, body={response_body}")
+            self.logger.error(f"SQS API error: status_code=%s, body=%s", response.status, response_body)
             raise SQSClientBaseError
 
         return parse_xml_result_response(action=params["Action"], body=response_body, logger=self.logger)
