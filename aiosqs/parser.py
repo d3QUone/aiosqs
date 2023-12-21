@@ -70,7 +70,7 @@ def parse_xml_result_response(action: str, body: str, logger: Optional[LoggerTyp
         )
 
     # Find if it's a single element or a list
-    xpath = f"./{action}Result"
+    xpath = f"./*[local-name() = '{action}Result']"
     elements = collect_elements(root=root, xpath=xpath)
 
     # Response is a list of objects of the same type

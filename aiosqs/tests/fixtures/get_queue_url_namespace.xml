@@ -1,0 +1,10 @@
+<GetQueueUrlResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/">
+    <GetQueueUrlResult>
+        <QueueUrl>
+            http://sqs.mcs.mail.ru/account123/example_queue
+        </QueueUrl>
+    </GetQueueUrlResult>
+    <ResponseMetadata>
+        <RequestId/>
+    </ResponseMetadata>
+</GetQueueUrlResponse>
