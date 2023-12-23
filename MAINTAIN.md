@@ -33,6 +33,8 @@ make test_e2e
 
 Update package version manually inside `aiosqs/__init__.py` file and inside `pyproject.toml` file.
 
+Create a new git tag as an increment.
+
 Then install a tool to publish:
 ```shell
 python3 -m pip install hatch
