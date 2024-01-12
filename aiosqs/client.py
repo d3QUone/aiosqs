@@ -6,7 +6,7 @@ import asyncio
 import datetime
 import urllib.parse
 from logging import getLogger
-from typing import Dict, Optional, List, Union
+from typing import Dict, Optional, List, Union, Callable, NamedTuple
 
 import aiohttp
 
@@ -16,6 +16,11 @@ from aiosqs.types import LoggerType, GetQueueUrlResponse, ReceiveMessageResponse
 from aiosqs.parser import parse_xml_result_response
 
 default_logger = getLogger(__name__)
+
+
+class SignedRequest(NamedTuple):
+    headers: Dict
+    querystring: str
 
 
 class SQSClient:
@@ -31,6 +36,7 @@ class SQSClient:
         timeout_sec: Optional[int] = None,
         logger: Optional[LoggerType] = None,
         verify_ssl: Optional[bool] = None,
+        quote_via: Optional[Callable] = None,
     ):
         self.service_name = "sqs"
         self.region_name = region_name
@@ -46,6 +52,11 @@ class SQSClient:
         self.timeout = aiohttp.ClientTimeout(total=timeout_sec or self.default_timeout_sec)
         self.session = aiohttp.ClientSession(timeout=self.timeout)
 
+        # It's possible to have differen quoting logic for different SQS providers.
+        # By default Amazon SQS uses `urllib.parse.quote`, so no extra customizations are required.
+        # Related issue: https://github.com/d3QUone/aiosqs/issues/13
+        self.quote_via = quote_via or urllib.parse.quote
+
     async def close(self):
         await self.session.close()
         # https://docs.aiohttp.org/en/stable/client_advanced.html#graceful-shutdown
@@ -57,7 +68,7 @@ class SQSClient:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
 
-    def get_headers(self, params: Dict):
+    def build_signed_request(self, params: Dict) -> SignedRequest:
         # Create a date for headers and the credential string
         t = datetime.datetime.utcnow()
         amz_date = t.strftime("%Y%m%dT%H%M%SZ")
@@ -69,7 +80,7 @@ class SQSClient:
         # Create the canonical query string. Important notes:
         # - Query string values must be URL-encoded (space=%20).
         # - The parameters must be sorted by name.
-        canonical_querystring = urllib.parse.urlencode(list(sorted(params.items())))
+        canonical_querystring = urllib.parse.urlencode(list(sorted(params.items())), quote_via=self.quote_via)
 
         # Create the canonical headers and signed headers.
         canonical_headers = f"host:{self.host}" + "\n" + f"x-amz-date:{amz_date}" + "\n"
@@ -116,21 +127,25 @@ class SQSClient:
         # The request can include any headers, but MUST include "host", "x-amz-date",
         # and (for this scenario) "Authorization". "host" and "x-amz-date" must
         # be included in the canonical_headers and signed_headers. Order here is not significant.
-        return {
+        headers = {
             "x-amz-date": amz_date,
             "Authorization": authorization_header,
             "content-type": "application/x-www-form-urlencoded",
         }
+        return SignedRequest(
+            headers=headers,
+            querystring=canonical_querystring,
+        )
 
     async def request(self, params: Dict) -> Union[Dict, List, None]:
         params["Version"] = "2012-11-05"
-        headers = self.get_headers(params=params)
+        signed_request = self.build_signed_request(params=params)
+        url = f"{self.endpoint_url}?{signed_request.querystring}"
 
         try:
             response = await self.session.get(
-                url=self.endpoint_url,
-                headers=headers,
-                params=params,
+                url=url,
+                headers=signed_request.headers,
                 verify_ssl=self.verify_ssl,
             )
         except Exception as e:
