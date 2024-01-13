@@ -80,7 +80,7 @@ class SQSClient:
         # Create the canonical query string. Important notes:
         # - Query string values must be URL-encoded (space=%20).
         # - The parameters must be sorted by name.
-        canonical_querystring = urllib.parse.urlencode(list(sorted(params.items())), quote_via=self.quote_via)
+        canonical_querystring = urllib.parse.urlencode(query=list(sorted(params.items())), quote_via=self.quote_via)
 
         # Create the canonical headers and signed headers.
         canonical_headers = f"host:{self.host}" + "\n" + f"x-amz-date:{amz_date}" + "\n"
