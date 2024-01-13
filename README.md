@@ -1,6 +1,9 @@
-## aiosqs
+# aiosqs
 
 [![pypi](https://img.shields.io/pypi/v/aiosqs.svg)](https://pypi.org/project/aiosqs/)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/aiosqs)
+
+### About package
 
 Python asynchronous and lightweight SQS client. The goal of this library is to provide fast and optimal access to SQS 
 for Python projects, e.g. when you need a high-load queue consumer or high-load queue producer written in Python.
@@ -9,9 +12,8 @@ Supports Python versions 3.8, 3.9, 3.10, 3.11, 3.12.
 
 Supported and tested Amazon-like SQS providers: Amazon, VK Cloud.
 
-----
 
-## Why aiosqs?
+### Why aiosqs?
 
 Main problem of `botocore` and `aiobotocore` is huge memory and CPU consumption.
 Also `aiobotocore` itself is a transition of `botocore` to async interface without any optimizations.
@@ -22,15 +24,14 @@ Related issues:
 - https://github.com/aio-libs/aiobotocore/issues/970
 
 
-## Installation
+### Installation
 
-Install package:
 ```shell
 pip install aiosqs
 ```
 
 
-## Usage
+### Usage
 
 Create a client:
 ```python
