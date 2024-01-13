@@ -1,8 +1,10 @@
 import unittest
 import re
 import logging
+import urllib.parse
 
 import ddt
+from freezegun import freeze_time
 from aioresponses import aioresponses
 
 from aiosqs.exceptions import SQSErrorResponse
@@ -11,12 +13,10 @@ from aiosqs.tests.utils import load_fixture
 
 
 @ddt.ddt(testNameFormat=ddt.TestNameFormat.INDEX_ONLY)
-class ClientTestCase(unittest.IsolatedAsyncioTestCase):
+class DefaultClientTestCase(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
-        await super().asyncSetUp()
-
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.CRITICAL)
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.CRITICAL)
 
         self.client = SQSClient(
             aws_access_key_id="access_key_id",
@@ -24,11 +24,35 @@ class ClientTestCase(unittest.IsolatedAsyncioTestCase):
             region_name="us-west-2",
             host="mocked_amazon_host.com",
             timeout_sec=0,
-            logger=logger,
+            logger=self.logger,
         )
 
     async def asyncTearDown(self):
         await self.client.close()
+
+    async def test_signature_with_quote_via(self):
+        params = {
+            "Action": "SendMessage",
+            "DelaySeconds": 0,
+            "MessageBody": "a     b    c     d",
+            "QueueUrl": "http://host.com/internal/tests",
+            "Version": "2012-11-05",
+        }
+        with freeze_time("2022-03-07T11:30:00.0000"):
+            signed_request = self.client.build_signed_request(params=params)
+
+        self.assertEqual(
+            signed_request.headers,
+            {
+                "x-amz-date": "20220307T113000Z",
+                "Authorization": "AWS4-HMAC-SHA256 Credential=access_key_id/20220307/us-west-2/sqs/aws4_request, SignedHeaders=host;x-amz-date, Signature=7d7ae7f85d3175f61e5256ed560c7b284491f767b9c352d1231f92ec04043d8e",
+                "content-type": "application/x-www-form-urlencoded",
+            },
+        )
+        self.assertEqual(
+            signed_request.querystring,
+            "Action=SendMessage&DelaySeconds=0&MessageBody=a%20%20%20%20%20b%20%20%20%20c%20%20%20%20%20d&QueueUrl=http%3A%2F%2Fhost.com%2Finternal%2Ftests&Version=2012-11-05",
+        )
 
     @aioresponses()
     async def test_is_context_manager(self, mock):
@@ -67,3 +91,44 @@ class ClientTestCase(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(exception.error.type, "Sender")
         self.assertEqual(exception.error.code, "InvalidClientTokenId")
         self.assertEqual(exception.error.message, error_message)
+
+
+class VKClientTestCase(DefaultClientTestCase):
+    async def asyncSetUp(self):
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.CRITICAL)
+
+        self.client = SQSClient(
+            aws_access_key_id="access_key_id",
+            aws_secret_access_key="secret_access_key",
+            region_name="us-west-2",
+            host="mocked_amazon_host.com",
+            timeout_sec=0,
+            logger=self.logger,
+            quote_via=urllib.parse.quote_plus,
+        )
+
+    async def test_signature_with_quote_via(self):
+        params = {
+            "Action": "SendMessage",
+            "DelaySeconds": 0,
+            "MessageBody": "a     b    c     d",
+            "QueueUrl": "http://host.com/internal/tests",
+            "Version": "2012-11-05",
+        }
+
+        with freeze_time("2022-03-07T11:30:00.0000"):
+            signed_request = self.client.build_signed_request(params=params)
+
+        self.assertEqual(
+            signed_request.headers,
+            {
+                "x-amz-date": "20220307T113000Z",
+                "Authorization": "AWS4-HMAC-SHA256 Credential=access_key_id/20220307/us-west-2/sqs/aws4_request, SignedHeaders=host;x-amz-date, Signature=0c36e0d3f62bd7ecb7e78ffe09fbd1224b7f850f3b4f13c7fc82e516fc7f2c57",
+                "content-type": "application/x-www-form-urlencoded",
+            },
+        )
+        self.assertEqual(
+            signed_request.querystring,
+            "Action=SendMessage&DelaySeconds=0&MessageBody=a+++++b++++c+++++d&QueueUrl=http%3A%2F%2Fhost.com%2Finternal%2Ftests&Version=2012-11-05",
+        )

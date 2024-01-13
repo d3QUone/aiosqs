@@ -44,7 +44,7 @@ Source = "https://github.com/d3QUone/aiosqs"
 
 [tool.poetry]
 name = "aiosqs"
-version = "1.0.4"
+version = "1.0.5"
 description = "Python asynchronous and lightweight SQS client."
 authors = ["Vladimir Kasatkin <vladimirkasatkinbackend@gmail.com>"]
 license = "MIT"

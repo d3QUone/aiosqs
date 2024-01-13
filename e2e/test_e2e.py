@@ -1,5 +1,6 @@
 import unittest
 import logging
+from urllib.parse import quote_plus
 
 from dotenv import dotenv_values
 
@@ -29,6 +30,7 @@ class E2ETestCase(unittest.IsolatedAsyncioTestCase):
             host=self.host,
             verify_ssl=False,
             logger=logger,
+            quote_via=quote_plus,
         )
 
     async def asyncTearDown(self):

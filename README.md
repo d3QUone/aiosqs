@@ -7,6 +7,8 @@ for Python projects, e.g. when you need a high-load queue consumer or high-load 
 
 Supports Python versions 3.8, 3.9, 3.10, 3.11, 3.12.
 
+Supported and tested Amazon-like SQS providers: Amazon, VK Cloud.
+
 ----
 
 ## Why aiosqs?
