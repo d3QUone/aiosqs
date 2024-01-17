@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ErrorResponse>
+    <Error>
+        <Message>The specified queue doesn't exist.</Message>
+        <Code>AWS.SimpleQueueService.NonExistentQueue</Code>
+    </Error>
+    <RequestId>bff33def-9a5591c9-9546a300-e62db9a8-eab6060aaa830c877ae944067a465ddb</RequestId>
+</ErrorResponse>

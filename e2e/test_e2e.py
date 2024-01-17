@@ -54,11 +54,14 @@ class E2ETestCase(unittest.IsolatedAsyncioTestCase):
         queue_url = response["QueueUrl"]
 
         message_body = "a     b    c     d"
-        response = await self.client.send_message(
-            queue_url=queue_url,
-            message_body=message_body,
-        )
-        self.assertEqual(set(response.keys()), {"MessageId", "MD5OfMessageBody"})
+        try:
+            response = await self.client.send_message(
+                queue_url=queue_url,
+                message_body=message_body,
+            )
+            self.assertEqual(set(response.keys()), {"MessageId", "MD5OfMessageBody"})
+        except SQSErrorResponse as e:
+            self.fail(f"Recieved error: {e.error}")
 
         response = await self.client.receive_message(
             queue_url=queue_url,
