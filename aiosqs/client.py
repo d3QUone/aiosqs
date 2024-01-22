@@ -176,13 +176,26 @@ class SQSClient:
         }
         return await self.request(params=params)
 
-    async def send_message(self, queue_url: str, message_body: str, delay_seconds: int = 0) -> SendMessageResponse:
+    async def send_message(
+        self,
+        queue_url: str,
+        message_body: str,
+        delay_seconds: int = 0,
+        message_group_id: str = None,
+        message_deduplication_id: str = None,
+    ) -> SendMessageResponse:
+        """https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessage.html"""
         params = {
             "Action": "SendMessage",
             "DelaySeconds": delay_seconds,
             "MessageBody": message_body,
             "QueueUrl": queue_url,
         }
+        # Only for FIFO queues
+        if message_group_id:
+            params["MessageGroupId"] = message_group_id
+        if message_deduplication_id:
+            params["MessageDeduplicationId"] = message_deduplication_id
         return await self.request(params=params)
 
     async def receive_message(
