@@ -1,25 +1,16 @@
-import unittest
-
-from aiosqs.parser import parse_xml_result_response
-from aiosqs.tests.utils import load_fixture
+from aiosqs.exceptions import SQSErrorResponse
+from aiosqs.tests.cases import ActionTestCase
 
 
-class ReceiveMessageTestCase(unittest.TestCase):
-    maxDiff = None
+class ReceiveMessageTestCase(ActionTestCase):
     action = "ReceiveMessage"
 
     def test_no_messages(self):
-        res = parse_xml_result_response(
-            action=self.action,
-            body=load_fixture("receive_message_empty.xml"),
-        )
+        res = self.parseXMLResponse("receive_message_empty.xml")
         self.assertIsNone(res)
 
     def test_one_message(self):
-        res = parse_xml_result_response(
-            action=self.action,
-            body=load_fixture("receive_message.xml"),
-        )
+        res = self.parseXMLResponse("receive_message.xml")
         self.assertEqual(
             res,
             [
@@ -33,10 +24,7 @@ class ReceiveMessageTestCase(unittest.TestCase):
         )
 
     def test_parse_oneline_xml(self):
-        res = parse_xml_result_response(
-            action=self.action,
-            body=load_fixture("receive_message_ugly.xml"),
-        )
+        res = self.parseXMLResponse("receive_message_ugly.xml")
         self.assertEqual(
             res,
             [
@@ -50,10 +38,7 @@ class ReceiveMessageTestCase(unittest.TestCase):
         )
 
     def test_many_messages(self):
-        res = parse_xml_result_response(
-            action=self.action,
-            body=load_fixture("receive_messages.xml"),
-        )
+        res = self.parseXMLResponse("receive_messages.xml")
         self.assertEqual(
             res,
             [
@@ -90,3 +75,15 @@ class ReceiveMessageTestCase(unittest.TestCase):
             ],
         )
         self.assertEqual(len(res), 5)
+
+    def test_unknown_error(self):
+        with self.assertRaises(SQSErrorResponse) as e:
+            self.parseXMLResponse("error_500.xml")
+        exception = e.exception
+        self.assertEqual(exception.request_id, "9ae1448a-3d1c-4b7f-b699-f6407e9dc5f2")
+        self.assertEqual(exception.error.type, "Sender")
+        self.assertEqual(exception.error.code, "InternalFailure")
+        self.assertEqual(
+            exception.error.message,
+            "The request processing has failed because of an unknown error, exception or failure.",
+        )

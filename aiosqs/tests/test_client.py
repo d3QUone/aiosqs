@@ -9,7 +9,7 @@ from aioresponses import aioresponses
 
 from aiosqs.exceptions import SQSErrorResponse
 from aiosqs.client import SQSClient
-from aiosqs.tests.utils import load_fixture
+from aiosqs.tests.fixtures import load_fixture
 
 
 @ddt.ddt(testNameFormat=ddt.TestNameFormat.INDEX_ONLY)
