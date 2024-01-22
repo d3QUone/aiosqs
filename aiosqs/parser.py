@@ -52,17 +52,18 @@ def parse_xml_result_response(action: str, body: str, logger: Optional[LoggerTyp
         remove_pis=True,
         recover=False,
     )
-    root = etree.fromstring(text=body, parser=parser)
+    root = etree.fromstring(text=body.encode("utf8"), parser=parser)
 
     request_id = find_request_id(root=root)
 
     # Check for errors first
     xpath = "./*[local-name() = 'Error']"
     if elements := collect_elements(root=root, xpath=xpath):
-        error = elements[0]
+        error: dict = elements[0]
+        error_type = error.get("Type") or "Sender"
         raise SQSErrorResponse(
             error=ErrorData(
-                type=error["Type"],
+                type=error_type,
                 code=error["Code"],
                 message=error["Message"],
             ),
