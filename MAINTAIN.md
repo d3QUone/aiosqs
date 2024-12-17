@@ -8,6 +8,12 @@ poetry install
 poetry run pre-commit install
 ```
 
+Normally code formatters are included in pre-commit hook.
+
+Run all code formatter manually:
+```shell
+poetry run pre-commit run --all-files
+```
 
 ## Unit-tests
 
