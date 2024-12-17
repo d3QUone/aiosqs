@@ -10,4 +10,4 @@ from aiosqs.types import (
     SendMessageResponse,
 )
 
-VERSION = "1.0.5"
+VERSION = "1.0.6"
