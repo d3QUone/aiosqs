@@ -43,7 +43,13 @@ Create a new git tag as an increment.
 
 Then install a tool to publish:
 ```shell
-python3 -m pip install hatch
+python3 -m pip install -U hatch
+```
+
+```shell
+hatch --version
+
+Hatch, version 1.14.0
 ```
 
 ```shell

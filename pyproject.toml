@@ -1,7 +1,6 @@
 [project]
 name = "aiosqs"
 description = "Python asynchronous and lightweight SQS client."
-license = "MIT"
 authors = [
     {name = "Vladimir Kasatkin", email = "vladimirkasatkinbackend@gmail.com"},
 ]
@@ -22,7 +21,6 @@ classifiers = [
     "Operating System :: Unix",
     "Operating System :: POSIX :: Linux",
     "Environment :: Console",
-    "Environment :: MacOS X",
     "Framework :: AsyncIO",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Internet",
