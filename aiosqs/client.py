@@ -37,12 +37,13 @@ class SQSClient:
         logger: Optional[LoggerType] = None,
         verify_ssl: Optional[bool] = None,
         quote_via: Optional[Callable] = None,
+        aws_session_token: Optional[str] = None,
     ):
         self.service_name = "sqs"
         self.region_name = region_name
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
-
+        self.aws_session_token = aws_session_token
         # It's your host including region (if related), e.g. "sqs.us-west-2.amazonaws.com"
         self.host = host
         self.endpoint_url = f"https://{host}"
@@ -83,10 +84,15 @@ class SQSClient:
         canonical_querystring = urllib.parse.urlencode(query=list(sorted(params.items())), quote_via=self.quote_via)
 
         # Create the canonical headers and signed headers.
-        canonical_headers = f"host:{self.host}" + "\n" + f"x-amz-date:{amz_date}" + "\n"
+        canonical_headers = f"host:{self.host}\nx-amz-date:{amz_date}\n"
 
         # Create the list of signed headers.
         signed_headers = "host;x-amz-date"
+
+        # Add session token if present
+        if self.aws_session_token:
+            canonical_headers += f"x-amz-security-token:{self.aws_session_token}\n"
+            signed_headers += ";x-amz-security-token"
 
         # Create payload hash. For GET requests, the payload is an empty string ("").
         payload_hash = sha256_hexdigest("")
@@ -132,6 +138,10 @@ class SQSClient:
             "Authorization": authorization_header,
             "content-type": "application/x-www-form-urlencoded",
         }
+
+        if self.aws_session_token:
+            headers["x-amz-security-token"] = self.aws_session_token
+
         return SignedRequest(
             headers=headers,
             querystring=canonical_querystring,

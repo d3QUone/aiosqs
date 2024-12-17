@@ -93,6 +93,85 @@ class DefaultClientTestCase(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(exception.error.message, error_message)
 
 
+@ddt.ddt(testNameFormat=ddt.TestNameFormat.INDEX_ONLY)
+class IAMAuthTestCase(unittest.IsolatedAsyncioTestCase):
+    async def asyncSetUp(self):
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.CRITICAL)
+
+        self.client = SQSClient(
+            aws_access_key_id="access_key_id",
+            aws_secret_access_key="secret_access_key",
+            region_name="us-west-2",
+            host="mocked_amazon_host.com",
+            timeout_sec=0,
+            logger=self.logger,
+            aws_session_token="session_token_123",
+        )
+
+    async def asyncTearDown(self):
+        await self.client.close()
+
+    def test_session_token_in_headers(self):
+        params = {
+            "Action": "SendMessage",
+            "DelaySeconds": 0,
+            "MessageBody": "test message",
+            "QueueUrl": "http://host.com/queue",
+            "Version": "2012-11-05",
+        }
+        with freeze_time("2022-03-07T11:30:00.0000"):
+            signed_request = self.client.build_signed_request(params=params)
+
+        # Verify session token is in headers
+        self.assertIn("x-amz-security-token", signed_request.headers)
+        self.assertEqual(signed_request.headers["x-amz-security-token"], "session_token_123")
+
+    def test_session_token_in_signature(self):
+        params = {
+            "Action": "SendMessage",
+            "MessageBody": "test",
+            "QueueUrl": "http://host.com/queue",
+        }
+        with freeze_time("2022-03-07T11:30:00.0000"):
+            signed_request = self.client.build_signed_request(params=params)
+
+        # Verify session token is included in signed headers
+        self.assertIn("x-amz-security-token", signed_request.headers["Authorization"])
+
+    @aioresponses()
+    async def test_invalid_session_token(self, mock):
+        mock.get(
+            url=re.compile(r"https://mocked_amazon_host.com"),
+            status=403,
+            body=load_fixture("error_invalid_session_token.xml"),
+        )
+
+        with self.assertRaises(SQSErrorResponse) as e:
+            await self.client.get_queue_url(queue_name="test_queue")
+
+        exception = e.exception
+        self.assertEqual(exception.error.type, "Sender")
+        self.assertEqual(exception.error.code, "InvalidSecurityToken")
+        self.assertEqual(exception.error.message, "The provided security token is invalid.")
+
+    @aioresponses()
+    async def test_signature_mismatch(self, mock):
+        mock.get(
+            url=re.compile(r"https://mocked_amazon_host.com"),
+            status=403,
+            body=load_fixture("error_signature.xml"),
+        )
+
+        with self.assertRaises(SQSErrorResponse) as e:
+            await self.client.send_message(queue_url="https://sqs.us-east-1.amazonaws.com/queue", message_body="test message")
+
+        exception = e.exception
+        self.assertEqual(exception.error.type, "Sender")
+        self.assertEqual(exception.error.code, "SignatureDoesNotMatch")
+        self.assertIn("The request signature we calculated does not match", exception.error.message)
+
+
 class VKClientTestCase(DefaultClientTestCase):
     async def asyncSetUp(self):
         self.logger = logging.getLogger(__name__)

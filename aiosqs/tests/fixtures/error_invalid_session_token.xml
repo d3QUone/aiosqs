@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ErrorResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/">
+   <Error>
+      <Type>Sender</Type>
+      <Code>InvalidSecurityToken</Code>
+      <Message>The provided security token is invalid.</Message>
+   </Error>
+   <RequestId>f679cf26-effe-5e59-81ca-92cf5c4c713b</RequestId>
+</ErrorResponse>
