@@ -84,10 +84,7 @@ class SQSClient:
         canonical_querystring = urllib.parse.urlencode(query=list(sorted(params.items())), quote_via=self.quote_via)
 
         # Create the canonical headers and signed headers.
-        canonical_headers = (
-            f"host:{self.host}\n"
-            f"x-amz-date:{amz_date}\n"
-        )
+        canonical_headers = f"host:{self.host}\nx-amz-date:{amz_date}\n"
 
         # Create the list of signed headers.
         signed_headers = "host;x-amz-date"

@@ -164,10 +164,7 @@ class IAMAuthTestCase(unittest.IsolatedAsyncioTestCase):
         )
 
         with self.assertRaises(SQSErrorResponse) as e:
-            await self.client.send_message(
-                queue_url="https://sqs.us-east-1.amazonaws.com/queue",
-                message_body="test message"
-            )
+            await self.client.send_message(queue_url="https://sqs.us-east-1.amazonaws.com/queue", message_body="test message")
 
         exception = e.exception
         self.assertEqual(exception.error.type, "Sender")
